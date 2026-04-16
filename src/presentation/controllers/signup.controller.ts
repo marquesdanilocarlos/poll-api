@@ -2,7 +2,7 @@ export default class SignupController {
     handle(httpRequest: any): any {
         return {
             statusCode: 400,
-            body: {}
+            body: new Error('Parâmetro "name" não informado')
         }
     }
 }
