@@ -1,10 +1,12 @@
+import {HttpRequest, HttpResponse} from '@/types/http'
+
 export default class SignupController {
-    handle(httpRequest: any): any {
+    handle(httpRequest: HttpRequest): HttpResponse {
 
         if (!httpRequest.body.name) {
             return {
                 statusCode: 400,
-                    body: new Error('Parâmetro "name" não informado')
+                body: new Error('Parâmetro "name" não informado')
             }
         }
 
@@ -15,6 +17,9 @@ export default class SignupController {
             }
         }
 
-        return
+        return {
+            statusCode: 200,
+            body: 'ok'
+        }
     }
 }
