@@ -1,4 +1,5 @@
 import {HttpRequest, HttpResponse} from '@/types/http'
+import MissingParamError from '@/presentation/errors/missing-param.error'
 
 export default class SignupController {
     handle(httpRequest: HttpRequest): HttpResponse {
@@ -6,14 +7,14 @@ export default class SignupController {
         if (!httpRequest.body.name) {
             return {
                 statusCode: 400,
-                body: new Error('Parâmetro "name" não informado')
+                body: new MissingParamError('Parâmetro "name" não informado')
             }
         }
 
         if (!httpRequest.body.email) {
             return {
                 statusCode: 400,
-                body: new Error('Parâmetro "email" não informado')
+                body: new MissingParamError('Parâmetro "email" não informado')
             }
         }
 
