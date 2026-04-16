@@ -3,12 +3,17 @@
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
+  "type": "module",
   "scripts": {
     "build": "tsc"
   },
-  "dependencies": {},
   "devDependencies": {
+    "@types/node": "^25.6.0",
+    "git-commit-msg-linter": "^5.0.8",
     "typescript": "^5.5.3"
   },
-  "private": true
+  "private": true,
+  "dependencies": {
+    "eslint-config-love": "^153.0.0"
+  }
 }
