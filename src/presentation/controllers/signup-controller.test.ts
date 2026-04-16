@@ -12,5 +12,6 @@ describe('SignUp Controller', () => {
         }
         const httpResponse = sut.handle(request)
         expect(httpResponse.statusCode).toBe(400)
+        expect(httpResponse.body).toEqual(Error ('Parâmetro "name" não informado'))
     })
 })
