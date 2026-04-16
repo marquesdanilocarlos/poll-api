@@ -5,15 +5,18 @@
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
-    "build": "tsc"
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "test": "vitest run"
   },
   "devDependencies": {
     "@types/node": "^25.6.0",
     "git-commit-msg-linter": "^5.0.8",
-    "typescript": "^5.5.3"
+    "typescript": "^5.5.3",
+    "vitest": "^4.1.4"
   },
   "private": true,
   "dependencies": {
-    "eslint-config-love": "^153.0.0"
+    "eslint-config-love": "^153.0.0",
+    "unplugin-swc": "^1.5.9"
   }
 }
