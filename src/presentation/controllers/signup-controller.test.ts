@@ -7,17 +7,31 @@ type sutType = {
     emailValidatorStub: EmailValidator
 }
 
-class EmailValidatorStub implements EmailValidator {
-    isValid(email: string): boolean {
-        return true
+const makeEmailValidator = (): EmailValidator => {
+    class EmailValidatorStub implements EmailValidator {
+        isValid(email: string): boolean {
+            return true
+        }
     }
+    return new EmailValidatorStub()
+}
+
+const makeEmailValidatorWithError = (): EmailValidator => {
+    class EmailValidatorStub implements EmailValidator {
+        isValid(email: string): boolean {
+            throw new Error()
+        }
+    }
+    return new EmailValidatorStub()
 }
 
 const makeSut: () => sutType = () => {
-    const emailValidatorStub = new EmailValidatorStub()
+    const emailValidatorStub = makeEmailValidator()
     const sut = new SignupController(emailValidatorStub)
     return {sut, emailValidatorStub}
 }
+
+
 
 describe('SignUp Controller', () => {
     test('Deve retornar 400 se não for informado o nome', () => {
@@ -108,13 +122,7 @@ describe('SignUp Controller', () => {
     })
 
     test('Deve retornar 500 se o EmailValidator retornar exception', () => {
-        class EmailValidatorStub implements EmailValidator {
-            isValid(email: string): boolean {
-                throw new Error()
-            }
-        }
-
-        const emailValidatorStub = new EmailValidatorStub()
+        const emailValidatorStub = makeEmailValidatorWithError()
         const sut = new SignupController(emailValidatorStub)
         const request = {
             body: {
