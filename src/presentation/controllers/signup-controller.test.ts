@@ -92,4 +92,19 @@ describe('SignUp Controller', () => {
         expect(httpResponse.statusCode).toBe(400)
         expect(httpResponse.body).toEqual(new InvalidParamError('email'))
     })
+
+    test('Deve chamar EmailValidator com email correto', () => {
+        const {sut, emailValidatorStub} = makeSut()
+        const isValidSpy = vitest.spyOn(emailValidatorStub, 'isValid')
+        const request = {
+            body: {
+                name: 'Danilo Marques',
+                email: 'email@mail.com',
+                password: '123456',
+                confirmPassword: '123456'
+            }
+        }
+        sut.handle(request)
+        expect(isValidSpy).toHaveBeenCalledWith('email@mail.com')
+    })
 })
