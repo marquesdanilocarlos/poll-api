@@ -1,10 +1,13 @@
-import SignupController from '@/presentation/controllers/signup.controller'
-import {MissingParamError, InvalidParamError, ServerError } from '@/presentation/errors'
-import EmailValidator from '@/presentation/protocols/email-validator'
+import SignupController from '@/infra/controllers/signup.controller'
+import {MissingParamError, InvalidParamError, ServerError } from '@/infra/errors'
+import EmailValidator from '@/infra/validators/email-validator'
+import CreateAccount, {CreateAccountInput} from '@/application/usecases/create-account'
+import Account from '@/domain/Account'
 
 type sutType = {
     sut: SignupController
     emailValidatorStub: EmailValidator
+    createAccountStub: CreateAccount
 }
 
 const makeEmailValidator = (): EmailValidator => {
@@ -16,13 +19,27 @@ const makeEmailValidator = (): EmailValidator => {
     return new EmailValidatorStub()
 }
 
-const makeSut: () => sutType = () => {
-    const emailValidatorStub = makeEmailValidator()
-    const sut = new SignupController(emailValidatorStub)
-    return {sut, emailValidatorStub}
+const makeCreateAccount = (): CreateAccount => {
+    class CreateAccountStub implements CreateAccount {
+        execute (account: CreateAccountInput): Account {
+            return {
+                id: 'valid_id',
+                name: 'valid_name',
+                email: 'valid_email@mail.com',
+                password: 'valid_password'
+            }
+        }
+    }
+
+    return new CreateAccountStub()
 }
 
-
+const makeSut: () => sutType = () => {
+    const emailValidatorStub = makeEmailValidator()
+    const createAccountStub = makeCreateAccount()
+    const sut = new SignupController(emailValidatorStub, createAccountStub)
+    return {sut, emailValidatorStub, createAccountStub}
+}
 
 describe('SignUp Controller', () => {
     test('Deve retornar 400 se não for informado o nome', () => {
@@ -145,5 +162,25 @@ describe('SignUp Controller', () => {
         const httpResponse = sut.handle(request)
         expect(httpResponse.statusCode).toBe(400)
         expect(httpResponse.body).toEqual(new InvalidParamError('confirmPassword'))
+    })
+
+    test('Deve chamar AddAccount com os dados corretos', () => {
+        const {sut, createAccountStub} = makeSut()
+        const isValidSpy = vitest.spyOn(createAccountStub, 'execute')
+        const request = {
+            body: {
+                name: 'Danilo Marques',
+                email: 'invalid_email@mail.com',
+                password: '123456',
+                confirmPassword: '123456'
+            }
+        }
+
+        sut.handle(request)
+        expect(isValidSpy).toHaveBeenCalledWith({
+            name: 'Danilo Marques',
+            email: 'invalid_email@mail.com',
+            password: '123456',
+        })
     })
 })
