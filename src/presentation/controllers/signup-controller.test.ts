@@ -16,15 +16,6 @@ const makeEmailValidator = (): EmailValidator => {
     return new EmailValidatorStub()
 }
 
-const makeEmailValidatorWithError = (): EmailValidator => {
-    class EmailValidatorStub implements EmailValidator {
-        isValid(email: string): boolean {
-            throw new Error()
-        }
-    }
-    return new EmailValidatorStub()
-}
-
 const makeSut: () => sutType = () => {
     const emailValidatorStub = makeEmailValidator()
     const sut = new SignupController(emailValidatorStub)
@@ -122,8 +113,10 @@ describe('SignUp Controller', () => {
     })
 
     test('Deve retornar 500 se o EmailValidator retornar exception', () => {
-        const emailValidatorStub = makeEmailValidatorWithError()
-        const sut = new SignupController(emailValidatorStub)
+        const {sut, emailValidatorStub} = makeSut()
+        vitest.spyOn(emailValidatorStub, 'isValid').mockImplementationOnce(() => {
+            throw new Error()
+        })
         const request = {
             body: {
                 name: 'Danilo Marques',
