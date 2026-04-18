@@ -7,5 +7,5 @@ export type CreateAccountInput = {
 }
 
 export default interface CreateAccount {
-    execute(account: CreateAccountInput): Account
+    execute(account: CreateAccountInput): Promise<Account>
 }
