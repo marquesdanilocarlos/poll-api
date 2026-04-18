@@ -1,5 +1,5 @@
 import {HttpResponse} from '@/types/http'
-import {ServerError} from '@/presentation/errors'
+import {ServerError} from '@/infra/errors'
 
 export const badRequest = (error: Error): HttpResponse => ({
     statusCode: 400,

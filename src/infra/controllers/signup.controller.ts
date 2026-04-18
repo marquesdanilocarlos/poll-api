@@ -1,11 +1,12 @@
 import {HttpRequest, HttpResponse} from '@/types/http'
-import {MissingParamError, InvalidParamError} from '@/presentation/errors'
-import {badRequest, serverError} from '@/presentation/helper/http.helper'
-import Controller from '@/presentation/controllers/controller'
-import EmailValidator from '@/presentation/protocols/email-validator'
+import {MissingParamError, InvalidParamError} from '@/infra/errors'
+import {badRequest, serverError} from '@/infra/helpers/http.helper'
+import Controller from '@/infra/controllers/controller'
+import EmailValidator from '@/infra/validators/email-validator'
+import CreateAccount from '@/application/usecases/create-account'
 
 export default class SignupController implements Controller {
-    constructor(private emailValidator: EmailValidator) {
+    constructor(private emailValidator: EmailValidator, private createAccount: CreateAccount) {
 
     }
 
@@ -19,7 +20,7 @@ export default class SignupController implements Controller {
                 }
             }
 
-            const {email, password, confirmPassword} = httpRequest.body
+            const {name, email, password, confirmPassword} = httpRequest.body
 
             const validEmail = this.emailValidator.isValid(email)
 
@@ -30,6 +31,8 @@ export default class SignupController implements Controller {
             if (password !== confirmPassword) {
                 return badRequest(new InvalidParamError('confirmPassword'))
             }
+
+            this.createAccount.execute({name, email, password})
 
             return {
                 statusCode: 200,
