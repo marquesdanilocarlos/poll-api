@@ -1,6 +1,6 @@
 import {HttpRequest, HttpResponse} from '@/types/http'
 import {MissingParamError, InvalidParamError} from '@/infra/errors'
-import {badRequest, serverError} from '@/infra/helpers/http.helper'
+import {badRequest, ok, serverError} from '@/infra/helpers/http.helper'
 import Controller from '@/infra/controllers/controller'
 import EmailValidator from '@/infra/validators/email-validator'
 import CreateAccount from '@/application/usecases/create-account'
@@ -34,10 +34,7 @@ export default class SignupController implements Controller {
 
             const account = this.createAccount.execute({name, email, password})
 
-            return {
-                statusCode: 200,
-                body: account
-            }
+            return ok(account)
 
         } catch (error) {
             return  serverError()
