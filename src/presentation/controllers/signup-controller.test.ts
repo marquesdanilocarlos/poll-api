@@ -130,4 +130,20 @@ describe('SignUp Controller', () => {
         expect(httpResponse.statusCode).toBe(500)
         expect(httpResponse.body).toEqual(new ServerError())
     })
+
+    test('Deve retornar 400 se a confirmação do password for diferente', () => {
+        const {sut} = makeSut()
+        const request = {
+            body: {
+                name: 'Danilo Marques',
+                email: 'invalid_email@mail.com',
+                password: '123456',
+                confirmPassword: '12345678'
+            }
+        }
+
+        const httpResponse = sut.handle(request)
+        expect(httpResponse.statusCode).toBe(400)
+        expect(httpResponse.body).toEqual(new InvalidParamError('confirmPassword'))
+    })
 })
