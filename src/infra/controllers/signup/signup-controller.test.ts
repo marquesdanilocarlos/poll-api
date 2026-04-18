@@ -1,4 +1,4 @@
-import SignupController from '@/infra/controllers/signup.controller'
+import SignupController from '@/infra/controllers/signup/signup.controller'
 import {MissingParamError, InvalidParamError, ServerError } from '@/infra/errors'
 import EmailValidator from '@/infra/validators/email-validator'
 import CreateAccount, {CreateAccountInput} from '@/application/usecases/create-account'
@@ -182,5 +182,24 @@ describe('SignUp Controller', () => {
             email: 'invalid_email@mail.com',
             password: '123456',
         })
+    })
+
+    test('Deve retornar 500 se o CreateAccount retornar exception', () => {
+        const {sut, createAccountStub} = makeSut()
+        vitest.spyOn(createAccountStub, 'execute').mockImplementationOnce(() => {
+            throw new Error()
+        })
+        const request = {
+            body: {
+                name: 'Danilo Marques',
+                email: 'invalid_email@mail.com',
+                password: '123456',
+                confirmPassword: '123456'
+            }
+        }
+
+        const httpResponse = sut.handle(request)
+        expect(httpResponse.statusCode).toBe(500)
+        expect(httpResponse.body).toEqual(new ServerError())
     })
 })
